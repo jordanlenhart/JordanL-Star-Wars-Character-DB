@@ -77,9 +77,9 @@ async function searchForCharacter(query) {
 
 
 // STEP 4.2 REFACTORING DISPLAYING THE CHARACTERS
-
 function displayCharacters(characters){
   const listOfNames = characters.map(character => {
+	  
     // STEP 6.2 ADDING LINKS FOR EACH CHARACTER
     return `<li><a data-url="${character.url}">${character.name}</a></li>`
   }).join(" ");
@@ -98,38 +98,35 @@ function displayCharacters(characters){
   });
 }  
 
+
+// STEP 7.1 FIXING FETCHES
 document.addEventListener("DOMContentLoaded", function () {
   fetch(`https://swapi.py4e.com/api/people`).then(resp => resp.json()).then(data => {
-    console.log(data)
-    displayCharacters(data.results);
-  }).catch(e => {
-    console.log(e);
-    results.innerText = "The characters you seek are not here";
-  })
+    data.count >= 1 ? displayCharacters(data.results) : displayError();
 })
 
 
 // STEP 4.3 SHOWING CHARACTER SEARCH RESULTS
-
+// STEP 7.1 FIXING FETCHES
 async function searchForCharacter(query) {
-	const characterData = await fetch(`https://swapi.py4e.com/api/people?search=${query}`).then(resp => resp.json());
-
-	console.log(characterData);
-	displayCharacters(characterData.results)
+	const searchForCharacter = (characterData) => 
+	  characterData.count >= 1 ? displayCharacters(characterData.results) : displayError();
 }
 
 
 // STEP 5 MORE DEBOUNCING 
-
 const debouncedCharacterSearch = debounce(searchForCharacter, 500)
 
 searchInput.addEventListener("input", function (e) {
   const input = e.target.value;
   console.log(input);
-
-  debouncedCharacterSearch(input);
+// STEP 7.2 CHECKING INPUT LENGTH
+  if(input.length >= 1){
+  debouncedCharacterSearch(input)
+}
 })
 
+	
 // STEP 6.3 FILLING IN THE DIALOG ELEMENT
 function openCharacterDialog(characterApiUrl) {
   // Open the dialog
@@ -169,3 +166,11 @@ dialog.addEventListener('close', () => {
 
 // CLOSE DIALOG WEHN CLOSE BUTTON IS CLICKED
 closeDialogButton.addEventListener('click', () => dialog.close());
+
+
+// STEP 7.1 FIXING FETCHES
+
+// DISPLAY ERROR FUNC
+const displayError = () => {
+  results.innerHTML = `<ul class="characters"><li>The characters you seek are not here</li></ul>`;
+};
