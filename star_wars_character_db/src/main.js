@@ -1,11 +1,12 @@
+// STEP 6 CREATING VARIABLES FOR API DATA TO POPULATE
+
 const dialog = document.getElementById("popup-dialog");
 const characterTitle = document.getElementById("character-title");
 const dialogContent = document.getElementById("dialog-content");
 const closeDialogButton = document.getElementById("close-dialog");
 
 
-
-
+// STEP 2.3 SEARCH FUNCTIONALITY
 
 // Getting the search input
 const searchInput = document.getElementById("search-input");
@@ -16,6 +17,9 @@ searchInput.addEventListener("input", function (e) {
   const input = e.target.value;
   console.log(input);
 })
+
+
+// STEP 3.2 DISPLAYING THE CHARACTERS
 
 document.addEventListener("DOMContentLoaded", function(){
   fetch(`https://swapi.py4e.com/api/people`).then(resp => resp.json()).then(data => {
@@ -31,6 +35,7 @@ results.innerText = "The characters you seek are not here";
 })
 
   
+// STEP 5 DEBOUNCING (CONFUSING)
 
 const results = document.getElementById("results");
 
@@ -49,9 +54,6 @@ function debounce(func, wait) {
 }
 
 
-
-
-
 document.addEventListener("DOMContentLoaded", function(){
   fetch(`https://swapi.py4e.com/api/people`).then(resp => resp.json()).then(data => {
 console.log(data)
@@ -65,6 +67,7 @@ console.log(e);
 })
 
 
+// STEP 4.1 SEARCH FOR CHARACTER
 
 async function searchForCharacter(query) {
 	const characterData = await fetch(`https://swapi.py4e.com/api/people?search=${query}`).then(resp => resp.json());
@@ -72,14 +75,21 @@ async function searchForCharacter(query) {
 	console.log(characterData);
 }
 
+
+// STEP 4.2 REFACTORING DISPLAYING THE CHARACTERS
+
 function displayCharacters(characters){
   const listOfNames = characters.map(character => {
+    // STEP 6.2 ADDING LINKS FOR EACH CHARACTER
     return `<li><a data-url="${character.url}">${character.name}</a></li>`
   }).join(" ");
 
   results.innerHTML = `<ul class="characters">${listOfNames}</ul>`;
 
+  // STEP 6.3 ADDING THE EVENT LISTENERS
   const links = document.querySelectorAll('.characters a');
+	
+  // STEP 6.4 OPENING THE DIALOG W/ OPEN CHARACTER DIALOG
   links.forEach(link => {
     link.addEventListener('click', () => {
       const characterUrl = link.getAttribute('data-url');
@@ -99,12 +109,17 @@ document.addEventListener("DOMContentLoaded", function () {
 })
 
 
+// STEP 4.3 SHOWING CHARACTER SEARCH RESULTS
+
 async function searchForCharacter(query) {
 	const characterData = await fetch(`https://swapi.py4e.com/api/people?search=${query}`).then(resp => resp.json());
 
 	console.log(characterData);
 	displayCharacters(characterData.results)
 }
+
+
+// STEP 5 MORE DEBOUNCING 
 
 const debouncedCharacterSearch = debounce(searchForCharacter, 500)
 
@@ -115,6 +130,7 @@ searchInput.addEventListener("input", function (e) {
   debouncedCharacterSearch(input);
 })
 
+// STEP 6.3 FILLING IN THE DIALOG ELEMENT
 function openCharacterDialog(characterApiUrl) {
   // Open the dialog
   dialog.showModal();
@@ -137,22 +153,19 @@ function openCharacterDialog(characterApiUrl) {
 }
 
 
-// Close the dialog when clicking outside of it
-dialog.addEventListener('click', (event) => {
-  if (event.target === dialog) {
-    dialog.close();
-  }
-});
+// STEP 6.4 CLOSING THE DIALOG CHALLENGE
 
-//When the dialog closes, we reset it back to it's original state
-dialog.addEventListener("close", () => {
-  characterTitle.innerText = "";
-  dialogContent.innerHTML = "Loading...";
-})
-
-// Close the dialog when the close button is clicked within the dialog element
-closeDialogButton.addEventListener('click', () => {
+// CLOSE DIALOG WHEN CLICKING OUTSIDE
+dialog.addEventListener('click', (e) => {
+  if (e.target !== dialog) return;
   dialog.close();
 });
 
+// WHEN DIALOG CLOSES, RESET IT BACK TO OG STATE
+dialog.addEventListener('close', () => {
+  characterTitle.textContent = "";
+  dialogContent.innerHTML = "Loading...";
+});
 
+// CLOSE DIALOG WEHN CLOSE BUTTON IS CLICKED
+closeDialogButton.addEventListener('click', () => dialog.close());
