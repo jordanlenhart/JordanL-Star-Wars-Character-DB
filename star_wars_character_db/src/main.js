@@ -53,29 +53,6 @@ function debounce(func, wait) {
   };
 }
 
-
-document.addEventListener("DOMContentLoaded", function(){
-  fetch(`https://swapi.py4e.com/api/people`).then(resp => resp.json()).then(data => {
-console.log(data)
-const listOfCharacterNames = data.results.map(character => {
-   return `<li>${character.name}</li>`
-});
-results.innerHTML = `<ul class="characters">${listOfCharacterNames.join("")}</ul>`;
-  }).catch(e => {
-console.log(e);
-  })
-})
-
-
-// STEP 4.1 SEARCH FOR CHARACTER
-
-async function searchForCharacter(query) {
-	const characterData = await fetch(`https://swapi.py4e.com/api/people?search=${query}`).then(resp => resp.json());
-
-	console.log(characterData);
-}
-
-
 // STEP 4.2 REFACTORING DISPLAYING THE CHARACTERS
 function displayCharacters(characters){
   const listOfNames = characters.map(character => {
@@ -117,9 +94,19 @@ document.addEventListener("DOMContentLoaded", function(){
 // STEP 4.3 SHOWING CHARACTER SEARCH RESULTS
 // STEP 7.1 FIXING FETCHES
 async function searchForCharacter(query) {
-	const searchForCharacter = (characterData) => 
-	  characterData.count >= 1 ? displayCharacters(characterData.results) : displayError();
+	const characterData = await fetch(`https://swapi.py4e.com/api/people?search=${query}`).then(resp => resp.json());
+
+	console.log(characterData);
+	displayCharacters(characterData.results)
+  if (characterData.count >= 1) {
+    displayCharacters(characterData.results)
+   } else {
+    displayError()
+   }
+   
 }
+
+
 
 
 // STEP 5 MORE DEBOUNCING 
