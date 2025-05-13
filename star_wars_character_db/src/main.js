@@ -100,10 +100,18 @@ function displayCharacters(characters){
 
 
 // STEP 7.1 FIXING FETCHES
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function(){
   fetch(`https://swapi.py4e.com/api/people`).then(resp => resp.json()).then(data => {
-    data.count >= 1 ? displayCharacters(data.results) : displayError();
-})
+    if (data.count >= 1) {
+      displayCharacters(data.results)
+     } else {
+      displayError()
+     }     
+  }).catch(e => {
+   console.log(e);
+  })
+  })
+  
 
 
 // STEP 4.3 SHOWING CHARACTER SEARCH RESULTS
@@ -173,4 +181,4 @@ closeDialogButton.addEventListener('click', () => dialog.close());
 // DISPLAY ERROR FUNC
 const displayError = () => {
   results.innerHTML = `<ul class="characters"><li>The characters you seek are not here</li></ul>`;
-};
+}
